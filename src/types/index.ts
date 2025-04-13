@@ -228,7 +228,7 @@ class BasketView implements IView {
 		// послать сигнал submitEvent, с _products
 	}
 
-	render(data: IProductModel[]): HTMLElement {
+	render(data: ProductView[]): HTMLElement {
 		// выдать позиции для каждого дочернего элемента container
 		return this._container;
 	}
@@ -269,11 +269,7 @@ export class Page implements IView {
 		this._wrapper.classList.remove('page__wrapper_locked');
 	}
 
-	setCatalog(items: ICatalogModel[]) {
-		// Очистить дочерние элементы и заполнить новыми
-	}
-
-	render(items: ICatalogModel[]): HTMLElement {
+	render(items: ProductView[]): HTMLElement {
 		// внедрить все элменты
 		return this._container;
 	}

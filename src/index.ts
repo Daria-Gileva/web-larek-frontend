@@ -17,15 +17,19 @@ const templateCardBasket = document.querySelector(
 	'#card-basket'
 ) as HTMLTemplateElement;
 const templateBasket = document.querySelector('#basket') as HTMLTemplateElement;
-const templateOrder = document.querySelector('#order') as HTMLTemplateElement;;
-const templateContacts = document.querySelector('#contacts') as HTMLTemplateElement;;
-const templateOrderSuccess = document.querySelector('#success') as HTMLTemplateElement;
+const templateOrder = document.querySelector('#order') as HTMLTemplateElement;
+const templateContacts = document.querySelector(
+	'#contacts'
+) as HTMLTemplateElement;
+const templateOrderSuccess = document.querySelector(
+	'#success'
+) as HTMLTemplateElement;
 const wrapper = document.querySelector('.page__wrapper') as HTMLElement;
 const modalElement = document.querySelector('#modal-container') as HTMLElement;
 
 const events = new event.EventEmitter();
 
-const apiModel = new type.AppApi(CDN_URL, API_URL, ".png");
+const apiModel = new type.AppApi(CDN_URL, API_URL, '.png');
 const catalogModel = new type.CatalogModel(events);
 const basketModel = new type.BasketModel(events);
 const deliveryModel = new type.DeliveryModel();
@@ -34,9 +38,9 @@ const contactModel = new type.ContactModel();
 const modalView = new type.Modal(modalElement, events);
 const pageView = new type.Page(wrapper, events);
 const basketView = new type.BasketView(templateBasket, events);
-const deliveryFormView = new type.DeliveryFormView(templateOrder, events)
-const contactFormView = new type.ContactFormView(templateContacts, events)
-const successView = new type.SuccessView(templateOrderSuccess, events)
+const deliveryFormView = new type.DeliveryFormView(templateOrder, events);
+const contactFormView = new type.ContactFormView(templateContacts, events);
+const successView = new type.SuccessView(templateOrderSuccess, events);
 
 let productView: type.ProductView;
 
@@ -69,8 +73,8 @@ events.on('ProductCatalog:Action', (data: String) => {
 		events,
 		'ProductView'
 	);
-	modalView.render(productView.render(product),'ProductView');
-	productView.setActiveSubmit(!basketModel.isExist(product))
+	modalView.render(productView.render(product), 'ProductView');
+	productView.setActiveSubmit(!basketModel.isExist(product));
 	modalView.open();
 });
 
@@ -85,10 +89,10 @@ events.on('ProductView:Close', () => {
 events.on('ProductView:Action', (data: String) => {
 	let product = catalogModel.getProduct(data);
 	basketModel.add(product);
-	productView.setActiveSubmit(!basketModel.isExist(product))
+	productView.setActiveSubmit(!basketModel.isExist(product));
 });
 
-function renderFillBasket(){
+function renderFillBasket() {
 	let productViews: Array<HTMLElement> = [];
 	let counter = 1;
 	basketModel.items.forEach((element) => {
@@ -100,17 +104,17 @@ function renderFillBasket(){
 		);
 	});
 
-	modalView.render(basketView.render(productViews), "Basket");
+	modalView.render(basketView.render(productViews), 'Basket');
 }
 
 // Изменение корзины
 events.on(basketModel.changeEvent, () => {
 	pageView.updateCounter(basketModel.getCounter());
 	basketView.updateTotalPrice(basketModel.getAllSum());
-	basketView.setActiveSubmit(basketModel.getCounter().valueOf() > 0)
+	basketView.setActiveSubmit(basketModel.getCounter().valueOf() > 0);
 });
 
-events.on('ProductBasket:Action', (id: Number)=>{
+events.on('ProductBasket:Action', (id: Number) => {
 	basketModel.remove(id.valueOf() - 1);
 });
 
@@ -126,72 +130,76 @@ events.on(pageView.event, () => {
 		);
 	});
 
-	modalView.render(basketView.render(productViews), "Basket");
+	modalView.render(basketView.render(productViews), 'Basket');
 	modalView.open();
 });
 
-events.on("Basket:Open", () => {
+events.on('Basket:Open', () => {
 	pageView.lock(true);
 	events.on(basketModel.changeEvent, renderFillBasket);
-})
+});
 
-events.on("Basket:Close", ()=>{
+events.on('Basket:Close', () => {
 	pageView.lock(false);
 	events.off(basketModel.changeEvent, renderFillBasket);
-})
+});
 
-
-
-events.on(basketView.submit, ()=>{
-	if(basketModel.getCounter().valueOf() > 0){
-		modalView.render(deliveryFormView.render(deliveryModel), "Delivery");
+events.on(basketView.submit, () => {
+	if (basketModel.getCounter().valueOf() > 0) {
+		modalView.render(deliveryFormView.render(deliveryModel), 'Delivery');
 		deliveryFormView.setActiveSubmit(false);
 		events.off(basketModel.changeEvent, renderFillBasket);
 	}
-})
+});
 
-events.on("Delivery:Close", () => {
+events.on('Delivery:Close', () => {
 	pageView.lock(false);
 	deliveryModel.clear();
-})
+});
 
-
-events.on("Delivery:Change", () => {
+events.on('Delivery:Change', () => {
 	let data = deliveryFormView.getValues();
-	deliveryFormView.setActiveSubmit(deliveryModel.validate( data.payment, data.address));
-})
+	deliveryFormView.setActiveSubmit(
+		deliveryModel.validate(data.payment, data.address)
+	);
+});
 
 events.on(deliveryFormView.submitEvent, () => {
 	let data = deliveryFormView.getValues();
-	deliveryModel.set(data.payment, data.address)
-	modalView.render(contactFormView.render(contactModel), "Contacts");
+	deliveryModel.set(data.payment, data.address);
+	modalView.render(contactFormView.render(contactModel), 'Contacts');
 	contactFormView.setActiveSubmit(false);
-})
+});
 
-events.on("Contacts:Close", () => {
+events.on('Contacts:Close', () => {
 	deliveryModel.clear();
 	contactModel.clear();
 	pageView.lock(false);
-})
+});
 
-events.on("Contacts:Change", () => {
+events.on('Contacts:Change', () => {
 	let data = contactFormView.getValues();
-	contactFormView.setActiveSubmit(contactModel.validate(data.phone, data.email));
-})
+	contactFormView.setActiveSubmit(
+		contactModel.validate(data.phone, data.email)
+	);
+});
 
 events.on(contactFormView.submitEvent, () => {
 	let data = contactFormView.getValues();
-	contactModel.set(data.phone, data.email)
-	
+	contactModel.set(data.phone, data.email);
 
-	let orderRequestModel = new type.OrderRequestModel(deliveryModel, contactModel, basketModel)
+	let orderRequestModel = new type.OrderRequestModel(
+		deliveryModel,
+		contactModel,
+		basketModel
+	);
 	apiModel
 		.order(orderRequestModel)
 		.then(function (data: type.IOrderResponseModel) {
-			modalView.render(successView.render(data), "Success");
+			modalView.render(successView.render(data), 'Success');
 		})
 		.catch((error) => console.log(error));
-})
+});
 
 events.on(successView.event, () => {
 	basketModel.removeAll();
@@ -199,4 +207,4 @@ events.on(successView.event, () => {
 	contactModel.clear();
 	modalView.close();
 	pageView.lock(false);
-})
+});

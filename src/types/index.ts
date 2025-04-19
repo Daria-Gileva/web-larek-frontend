@@ -77,55 +77,53 @@ export interface IDeliveryModel {
 	address: string;
 
 	clear(): void;
-	set(payment: Payment, address: string):void;
-	validate(payment: Payment, address: string):boolean;
+	set(payment: Payment, address: string): void;
+	validate(payment: Payment, address: string): boolean;
 }
 
 export class DeliveryModel implements IDeliveryModel {
-
 	payment: Payment = Payment.card;
-	address: string = "";
+	address: string = '';
 
 	clear(): void {
 		this.payment = Payment.card;
-		this.address = "";
+		this.address = '';
 	}
 	validate(payment: Payment, address: string): boolean {
-		if(!payment || !address) return false;
+		if (!payment || !address) return false;
 		return true;
 	}
-	set(payment: Payment, address: string): void{
-		if(this.validate(payment,address)){
+	set(payment: Payment, address: string): void {
+		if (this.validate(payment, address)) {
 			this.payment = payment;
 			this.address = address;
 		}
 	}
 }
 
-
 export interface IContactModel {
 	phone: string;
 	email: string;
 
 	clear(): void;
-	set(phone: string, email: string):void;
-	validate(phone: string, email: string):boolean;
+	set(phone: string, email: string): void;
+	validate(phone: string, email: string): boolean;
 }
 
 export class ContactModel implements IContactModel {
-	phone: string = "";
-	email: string = "";
+	phone: string = '';
+	email: string = '';
 
 	clear(): void {
-		this.phone  = "";
-		this.email  = "";
+		this.phone = '';
+		this.email = '';
 	}
 	validate(phone: string, email: string): boolean {
-		if(!phone || !email) return false;
+		if (!phone || !email) return false;
 		return true;
 	}
-	set(phone: string, email: string): void{
-		if(this.validate(phone,email)){
+	set(phone: string, email: string): void {
+		if (this.validate(phone, email)) {
 			this.phone = phone;
 			this.email = email;
 		}
@@ -157,15 +155,19 @@ export class OrderRequestModel implements IOrderRequestModel {
 	total: number;
 	items: string[] = [];
 
-	constructor(deliveryModel: IDeliveryModel, contactModel: IContactModel, basketModel: IBasketModel){
+	constructor(
+		deliveryModel: IDeliveryModel,
+		contactModel: IContactModel,
+		basketModel: IBasketModel
+	) {
 		this.payment = deliveryModel.payment;
 		this.address = deliveryModel.address;
 		this.phone = contactModel.phone;
 		this.email = contactModel.email;
 		this.total = basketModel.getAllSum().valueOf();
-		basketModel.items.forEach(element=>{
+		basketModel.items.forEach((element) => {
 			this.items.push(element.id);
-		})
+		});
 	}
 }
 
@@ -189,18 +191,17 @@ export class BasketModel implements IBasketModel {
 	constructor(protected _event: IEventEmitter) {}
 
 	add(item: IProductModel): void {
-		if(!this.isExist(item)){
+		if (!this.isExist(item)) {
 			this.items.push(item);
 			this._event.emit(this.changeEvent, this.items);
 		}
 	}
 
-	isExist(item: IProductModel): boolean{
+	isExist(item: IProductModel): boolean {
 		let exist = false;
-		this.items.forEach(element => {
-			if(element.id == item.id)
-				exist = true
-		})
+		this.items.forEach((element) => {
+			if (element.id == item.id) exist = true;
+		});
 		return exist;
 	}
 
@@ -249,7 +250,12 @@ export class AppApi extends Api implements IAppAPI {
 	readonly cdn: string;
 	readonly imgExtens?: string;
 
-	constructor(cdn: string, baseUrl: string, imgExtens?: string, options?: RequestInit ) {
+	constructor(
+		cdn: string,
+		baseUrl: string,
+		imgExtens?: string,
+		options?: RequestInit
+	) {
 		super(baseUrl, options);
 
 		this.cdn = cdn;
@@ -260,7 +266,11 @@ export class AppApi extends Api implements IAppAPI {
 		return this.get('/product').then((data: IProductListResponceModel) =>
 			data.items.map((item) => ({
 				...item,
-				image: this.cdn + (this.imgExtens? item.image.replace(/\.svg$/, this.imgExtens) : item.image),
+				image:
+					this.cdn +
+					(this.imgExtens
+						? item.image.replace(/\.svg$/, this.imgExtens)
+						: item.image),
 			}))
 		);
 	}
@@ -289,11 +299,11 @@ export class Modal implements IView {
 		this._closeButton = _container.querySelector('.modal__close');
 		this._content = _container.querySelector('.modal__content');
 		this._closeButton.addEventListener('click', this.close.bind(this));
-		document.addEventListener('keydown', (event: KeyboardEvent)=>{
-			if (event.key === 'Escape') this.close()
+		document.addEventListener('keydown', (event: KeyboardEvent) => {
+			if (event.key === 'Escape') this.close();
 		});
 		this._container.addEventListener('click', (event) => {
-			if (event.currentTarget === event.target)this.close()
+			if (event.currentTarget === event.target) this.close();
 		});
 	}
 	set content(value: HTMLElement) {
@@ -310,8 +320,8 @@ export class Modal implements IView {
 		this._events.emit(this.closeEvent);
 	}
 	render(data?: HTMLElement, actualName?: String): HTMLElement {
-		this.openEvent = actualName+":Open";
-		this.closeEvent = actualName+":Close";
+		this.openEvent = actualName + ':Open';
+		this.closeEvent = actualName + ':Close';
 		this._content.replaceChildren(data);
 		return this._container;
 	}
@@ -355,14 +365,17 @@ export class ProductView implements IView {
 	}
 
 	onAction() {
-		this._events.emit(this.event, this._index? this._index.textContent :this.id);
+		this._events.emit(
+			this.event,
+			this._index ? this._index.textContent : this.id
+		);
 	}
 
 	setActiveSubmit(cond: boolean): void {
-		if(cond){
-			this._button.removeAttribute("disabled")
-		}else {
-			this._button.setAttribute("disabled", String(cond));
+		if (cond) {
+			this._button.removeAttribute('disabled');
+		} else {
+			this._button.setAttribute('disabled', String(cond));
 		}
 	}
 
@@ -370,7 +383,9 @@ export class ProductView implements IView {
 		if (data) {
 			this.id = data.id;
 			this._title.innerText = data.title;
-			this._price.innerText = data.price?`${data.price} синапсов`:'Бесценно';
+			this._price.innerText = data.price
+				? `${data.price} синапсов`
+				: 'Бесценно';
 			if (this._description && data.description) {
 				this._description.innerText = data.description;
 			}
@@ -379,7 +394,7 @@ export class ProductView implements IView {
 			}
 			if (this._category && data.category) {
 				this._category.classList.remove('card__category_other');
-				switch(data.category){
+				switch (data.category) {
 					case 'софт-скил':
 						this._category.classList.add('card__category_soft');
 						break;
@@ -427,12 +442,12 @@ export class BasketView implements IView {
 			'.basket__button',
 			this._container
 		);
-		this.setActiveSubmit(false)
+		this.setActiveSubmit(false);
 		this._button.addEventListener('click', () => this.onConfirm());
 	}
 
 	onConfirm() {
-		this._events.emit(this.submit)
+		this._events.emit(this.submit);
 	}
 
 	render(products: HTMLElement[]): HTMLElement {
@@ -446,12 +461,12 @@ export class BasketView implements IView {
 	}
 
 	setActiveSubmit(cond: boolean) {
-		if(cond){
-			this._button.removeAttribute("disabled")
-		}else {
-			this._button.setAttribute("disabled", String(cond));
+		if (cond) {
+			this._button.removeAttribute('disabled');
+		} else {
+			this._button.setAttribute('disabled', String(cond));
 		}
-	};
+	}
 
 	updateTotalPrice(total: Number): void {
 		this._price.textContent = `${total} синапсов`;
@@ -513,57 +528,71 @@ class Form {
 	submitEvent = 'Form:Submit';
 	changeEvent = 'Form:Change';
 
-	constructor(template: HTMLTemplateElement, protected _events: IEventEmitter, name?: string) {
+	constructor(
+		template: HTMLTemplateElement,
+		protected _events: IEventEmitter,
+		name?: string
+	) {
 		this._container = utils.cloneTemplate<HTMLFormElement>(template);
 
-		let tmpContextActions = utils.ensureElement<HTMLElement>(`.modal__actions`, this._container);
+		let tmpContextActions = utils.ensureElement<HTMLElement>(
+			`.modal__actions`,
+			this._container
+		);
 		this._submit = utils.ensureElement<HTMLButtonElement>(
 			`.button`,
 			tmpContextActions
 		);
 
-		this._inputs = utils.ensureAllElements<HTMLInputElement>(".form__input", this._container)
+		this._inputs = utils.ensureAllElements<HTMLInputElement>(
+			'.form__input',
+			this._container
+		);
 
-		let tmpContextButtons = utils.ensureElement<HTMLElement>(`.order`, this._container);
-		this._buttonsInput = utils.ensureAllElements<HTMLButtonElement>(".button", tmpContextButtons)
+		let tmpContextButtons = utils.ensureElement<HTMLElement>(
+			`.order`,
+			this._container
+		);
+		this._buttonsInput = utils.ensureAllElements<HTMLButtonElement>(
+			'.button',
+			tmpContextButtons
+		);
 
-		if(name){
+		if (name) {
 			this.submitEvent = name + ':Submit';
 			this.changeEvent = name + ':Change';
 		}
-		this._inputs.forEach(element=>{
-			element.addEventListener("input", (event:Event)=>{
+		this._inputs.forEach((element) => {
+			element.addEventListener('input', (event: Event) => {
 				const target = event.target as HTMLInputElement;
-				this._events.emit(this.changeEvent, target.value)
-			})
-		})
-		this._buttonsInput.forEach(element=>{
-			element.addEventListener("click", (event:Event)=>{
+				this._events.emit(this.changeEvent, target.value);
+			});
+		});
+		this._buttonsInput.forEach((element) => {
+			element.addEventListener('click', (event: Event) => {
 				const target = event.target as HTMLButtonElement;
 
 				this._buttonsInput.forEach((button) => {
 					button.classList.remove('button_alt-active');
 				});
 				target.classList.add('button_alt-active');
-				this._events.emit(this.changeEvent, target.name)
-			})
-		})
+				this._events.emit(this.changeEvent, target.name);
+			});
+		});
 
-		this._submit.addEventListener("click",  (e)=>{
+		this._submit.addEventListener('click', (e) => {
 			e.preventDefault();
 			this.onConfirm();
-		}
-		)
-
+		});
 	}
 
 	setActiveSubmit(cond: boolean) {
-		if(cond){
-			this._submit.removeAttribute("disabled")
-		}else {
-			this._submit.setAttribute("disabled", String(cond));
+		if (cond) {
+			this._submit.removeAttribute('disabled');
+		} else {
+			this._submit.setAttribute('disabled', String(cond));
 		}
-	};
+	}
 
 	onConfirm() {
 		this._events.emit(this.submitEvent);
@@ -574,13 +603,13 @@ export class DeliveryFormView extends Form implements IView {
 	protected _payment: Array<HTMLButtonElement>;
 	protected _address: HTMLInputElement;
 
-	constructor(
-		template: HTMLTemplateElement,
-		protected _events: IEventEmitter,
-	) {
+	constructor(template: HTMLTemplateElement, protected _events: IEventEmitter) {
 		super(template, _events, 'Delivery');
 
-		let tmpContextActions = utils.ensureElement<HTMLElement>(`.order`, this._container);
+		let tmpContextActions = utils.ensureElement<HTMLElement>(
+			`.order`,
+			this._container
+		);
 		this._payment = utils.ensureAllElements(`.button`, tmpContextActions);
 		this._address = utils.ensureElement<HTMLInputElement>(
 			`.form__input`,
@@ -595,39 +624,38 @@ export class DeliveryFormView extends Form implements IView {
 	}
 
 	setAddress(value: string) {
-		 this._address.value = value;
+		this._address.value = value;
 	}
 
 	setPayment(name: string) {
-			this._payment.forEach((button) => {
-				button.classList.remove('button_alt-active');
-			});
-	
-			const selectedButton = this._payment.find((button) => button.name === name);
-			if (selectedButton) {
-				selectedButton.classList.add('button_alt-active');
-			}
-	}
-
-	getPayment() : Payment.card {
-		let ret;
 		this._payment.forEach((button) => {
-			if(button.classList.contains('button_alt-active'))
-				ret = button.name
+			button.classList.remove('button_alt-active');
 		});
-		return ret
-	}
 
-	getValues(){
-		return{
-			address: this._address.value,
-			payment: this.getPayment()
+		const selectedButton = this._payment.find((button) => button.name === name);
+		if (selectedButton) {
+			selectedButton.classList.add('button_alt-active');
 		}
 	}
 
+	getPayment(): Payment.card {
+		let ret;
+		this._payment.forEach((button) => {
+			if (button.classList.contains('button_alt-active')) ret = button.name;
+		});
+		return ret;
+	}
+
+	getValues() {
+		return {
+			address: this._address.value,
+			payment: this.getPayment(),
+		};
+	}
+
 	render(data: IDeliveryModel): HTMLElement {
-			this.setAddress(data.address);
-			this.setPayment(data.payment);
+		this.setAddress(data.address);
+		this.setPayment(data.payment);
 		return this._container;
 	}
 }
@@ -635,14 +663,10 @@ export class DeliveryFormView extends Form implements IView {
 export class ContactFormView extends Form implements IView {
 	protected _phone: HTMLInputElement;
 	protected _email: HTMLInputElement;
-	
-	constructor(
-		template: HTMLTemplateElement,
-		protected _events: IEventEmitter
-	) {
+
+	constructor(template: HTMLTemplateElement, protected _events: IEventEmitter) {
 		super(template, _events, 'Contacts');
-		
-		console.log(this._container)
+
 		this._phone = utils.ensureElement<HTMLInputElement>(
 			'input[name="phone"]',
 			this._container
@@ -661,11 +685,11 @@ export class ContactFormView extends Form implements IView {
 		this._email.value = value;
 	}
 
-	getValues(){
-		return{
+	getValues() {
+		return {
 			phone: this._phone.value,
 			email: this._email.value,
-		}
+		};
 	}
 
 	render(data: IContactModel): HTMLElement {
@@ -683,12 +707,9 @@ export class SuccessView implements IView {
 	protected _button: HTMLButtonElement;
 	protected _container: HTMLElement;
 
-	readonly event = "Success:Action"
+	readonly event = 'Success:Action';
 
-	constructor(
-		template: HTMLTemplateElement,
-		protected _events: IEventEmitter
-	) {
+	constructor(template: HTMLTemplateElement, protected _events: IEventEmitter) {
 		this._container = utils.cloneTemplate<HTMLFormElement>(template);
 
 		this._title = utils.ensureElement<HTMLElement>(
@@ -704,7 +725,7 @@ export class SuccessView implements IView {
 			this._container
 		);
 
-		this._button.addEventListener('click', ()=>{
+		this._button.addEventListener('click', () => {
 			this._events.emit(this.event);
 		});
 	}

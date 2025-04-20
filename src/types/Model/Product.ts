@@ -10,17 +10,12 @@ export interface IProductModel {
 }
 
 export interface ICatalogModel {
-	readonly addEvent: string; // 'Catalog:Change';
+	readonly addEvent: string;
 	items: Array<IProductModel>;
-	// Заполнить элементы
-	// Послать сигнал
 	setItems(items: Array<IProductModel>): void;
 
-	// Разименовать элемент
 	getProduct(id: string): IProductModel;
 
-	// Очистиь элементы
-	// Послать сигнал
 	removeAll(): void;
 }
 

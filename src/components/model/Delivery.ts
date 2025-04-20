@@ -1,16 +1,4 @@
-export enum Payment {
-	card = 'card',
-	cash = 'cash',
-}
-
-export interface IDeliveryModel {
-	payment: Payment;
-	address: string;
-
-	clear(): void;
-	set(payment: Payment, address: string): void;
-	validate(payment: Payment, address: string): boolean;
-}
+import { IDeliveryModel, Payment } from '../../types';
 
 export class DeliveryModel implements IDeliveryModel {
 	payment: Payment = Payment.card;

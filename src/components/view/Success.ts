@@ -1,6 +1,5 @@
-import { IEventEmitter } from '..';
+import { IEventEmitter, IOrderResponseModel, IView } from '../../types';
 import { cloneTemplate, ensureElement } from '../../utils/utils';
-import { IOrderResponseModel } from '../Model/Api';
 
 export class SuccessView implements IView {
 	protected _title: HTMLElement;

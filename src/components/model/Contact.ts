@@ -1,11 +1,4 @@
-export interface IContactModel {
-	phone: string;
-	email: string;
-
-	clear(): void;
-	set(phone: string, email: string): void;
-	validate(phone: string, email: string): boolean;
-}
+import { IContactModel } from '../../types';
 
 export class ContactModel implements IContactModel {
 	phone: string = '';

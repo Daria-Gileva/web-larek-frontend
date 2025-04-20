@@ -1,6 +1,5 @@
-import { IEventEmitter } from '../..';
+import { IContactModel, IEventEmitter, IView } from '../../../types';
 import { ensureElement } from '../../../utils/utils';
-import { IContactModel } from '../../Model/Contact';
 import { Form } from './Form';
 
 export class ContactFormView extends Form implements IView {

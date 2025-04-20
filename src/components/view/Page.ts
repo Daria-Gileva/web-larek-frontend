@@ -1,4 +1,4 @@
-import { IEventEmitter } from '..';
+import { IEventEmitter, IView } from '../../types';
 import { ensureElement } from '../../utils/utils';
 
 export class Page implements IView {

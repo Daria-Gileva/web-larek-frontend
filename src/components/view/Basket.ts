@@ -1,4 +1,4 @@
-import { IEventEmitter } from '..';
+import { IEventEmitter, IView } from '../../types';
 import { cloneTemplate, ensureElement } from '../../utils/utils';
 
 export class BasketView implements IView {

@@ -1,6 +1,5 @@
-import { IEventEmitter } from '../..';
+import { IDeliveryModel, IEventEmitter, IView, Payment } from '../../../types';
 import { ensureAllElements, ensureElement } from '../../../utils/utils';
-import { IDeliveryModel, Payment } from '../../Model/Delivery';
 import { Form } from './Form';
 
 export class DeliveryFormView extends Form implements IView {

@@ -2,22 +2,19 @@ import './scss/styles.scss';
 
 import { API_URL, CDN_URL } from './utils/constants';
 import * as event from './components/base/events';
-import {
-	AppApi,
-	IOrderResponseModel,
-	OrderRequestModel,
-} from './types/Model/Api';
-import { CatalogModel, IProductModel } from './types/Model/Product';
-import { BasketModel } from './types/Model/Basket';
-import { DeliveryModel } from './types/Model/Delivery';
-import { ContactModel } from './types/Model/Contact';
-import { Modal } from './types/View/Modal';
-import { Page } from './types/View/Page';
-import { BasketView } from './types/View/Basket';
-import { DeliveryFormView } from './types/View/Form/Delivery';
-import { ContactFormView } from './types/View/Form/Contact';
-import { SuccessView } from './types/View/Succsess';
-import { ProductView } from './types/View/Product';
+import { AppApi, OrderRequestModel } from './components/AppApi';
+import { CatalogModel } from './components/model/Product';
+import { BasketModel } from './components/model/Basket';
+import { DeliveryModel } from './components/model/Delivery';
+import { ContactModel } from './components/model/Contact';
+import { Modal } from './components/view/Modal';
+import { Page } from './components/view/Page';
+import { BasketView } from './components/view/Basket';
+import { DeliveryFormView } from './components/view/Form/Delivery';
+import { ContactFormView } from './components/view/Form/Contact';
+import { SuccessView } from './components/view/Success';
+import { ProductView } from './components/view/Product';
+import { IOrderResponseModel, IProductModel } from './types';
 
 const templateCardCatalog = document.querySelector(
 	'#card-catalog'

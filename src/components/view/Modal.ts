@@ -1,4 +1,4 @@
-import { IEventEmitter } from '..';
+import { IEventEmitter, IView } from '../../types';
 
 export class Modal implements IView {
 	protected _closeButton: HTMLButtonElement;

@@ -1,6 +1,5 @@
-import { IEventEmitter } from '..';
+import { IEventEmitter, IProductModel, IView } from '../../types';
 import { cloneTemplate } from '../../utils/utils';
-import { IProductModel } from '../Model/Product';
 
 export class ProductView implements IView {
 	protected _title: HTMLElement;

@@ -1,4 +1,4 @@
-import { IEventEmitter } from '../..';
+import { IEventEmitter } from '../../../types';
 import {
 	cloneTemplate,
 	ensureAllElements,

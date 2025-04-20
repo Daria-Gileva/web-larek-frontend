@@ -1,18 +1,4 @@
-import { IEventEmitter } from '..';
-import { IProductModel } from './Product';
-
-export interface IBasketModel {
-	readonly changeEvent: string; //'Backet:Change';
-
-	items: Array<IProductModel>;
-
-	add(item: IProductModel): void;
-	isExist(item: IProductModel): boolean;
-	remove(id: Number): void;
-	removeAll(): void;
-	getCounter(): Number;
-	getAllSum(): Number;
-}
+import { IBasketModel, IEventEmitter, IProductModel } from '../../types';
 
 export class BasketModel implements IBasketModel {
 	changeEvent: string = 'Backet:Change';

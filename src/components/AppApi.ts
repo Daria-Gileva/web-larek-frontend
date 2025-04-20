@@ -1,20 +1,19 @@
-import { Api } from '../../components/base/api';
-import { IBasketModel } from './Basket';
-import { IContactModel } from './Contact';
-import { IDeliveryModel, Payment } from './Delivery';
-import { IProductModel } from './Product';
+import {
+	IBasketModel,
+	IContactModel,
+	IDeliveryModel,
+	IOrderResponseModel,
+	IProductModel,
+	Payment,
+} from '../types';
+import { Api } from './base/api';
 
-export interface IProductListResponseModel {
+interface IProductListResponseModel {
 	total: number;
 	items: IProductModel[];
 }
 
-export interface IOrderResponseModel {
-	id: string;
-	total: number;
-}
-
-export interface IOrderRequestModel {
+interface IOrderRequestModel {
 	payment: Payment;
 	address: string;
 	phone: string;
@@ -48,12 +47,8 @@ export class OrderRequestModel implements IOrderRequestModel {
 		console.log(this.items);
 	}
 }
-export class OrderResponseModel implements IOrderResponseModel {
-	id: string;
-	total: number;
-}
 
-export interface IAppAPI {
+interface IAppAPI {
 	getProductList: () => Promise<IProductModel[]>;
 	order: (order: IOrderRequestModel) => Promise<IOrderResponseModel>;
 }

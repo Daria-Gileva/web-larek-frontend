@@ -1,23 +1,4 @@
-import { IEventEmitter } from '..';
-
-export interface IProductModel {
-	id: string;
-	description: string;
-	image: string;
-	title: string;
-	category: string;
-	price: number | null;
-}
-
-export interface ICatalogModel {
-	readonly addEvent: string;
-	items: Array<IProductModel>;
-	setItems(items: Array<IProductModel>): void;
-
-	getProduct(id: string): IProductModel;
-
-	removeAll(): void;
-}
+import { ICatalogModel, IEventEmitter, IProductModel } from '../../types';
 
 export class CatalogModel implements ICatalogModel {
 	items: IProductModel[];

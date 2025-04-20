@@ -2,10 +2,22 @@ import './scss/styles.scss';
 
 import { API_URL, CDN_URL } from './utils/constants';
 import * as event from './components/base/events';
-import * as type from './types/index';
-import * as constants from './utils/constants';
-import * as utils from './utils/utils';
-import * as api from './components/base/api';
+import {
+	AppApi,
+	IOrderResponseModel,
+	OrderRequestModel,
+} from './types/Model/Api';
+import { CatalogModel, IProductModel } from './types/Model/Product';
+import { BasketModel } from './types/Model/Basket';
+import { DeliveryModel } from './types/Model/Delivery';
+import { ContactModel } from './types/Model/Contact';
+import { Modal } from './types/View/Modal';
+import { Page } from './types/View/Page';
+import { BasketView } from './types/View/Basket';
+import { DeliveryFormView } from './types/View/Form/Delivery';
+import { ContactFormView } from './types/View/Form/Contact';
+import { SuccessView } from './types/View/Succsess';
+import { ProductView } from './types/View/Product';
 
 const templateCardCatalog = document.querySelector(
 	'#card-catalog'
@@ -29,38 +41,36 @@ const modalElement = document.querySelector('#modal-container') as HTMLElement;
 
 const events = new event.EventEmitter();
 
-const apiModel = new type.AppApi(CDN_URL, API_URL, '.png');
-const catalogModel = new type.CatalogModel(events);
-const basketModel = new type.BasketModel(events);
-const deliveryModel = new type.DeliveryModel();
-const contactModel = new type.ContactModel();
+const apiModel = new AppApi(CDN_URL, API_URL, '.png');
+const catalogModel = new CatalogModel(events);
+const basketModel = new BasketModel(events);
+const deliveryModel = new DeliveryModel();
+const contactModel = new ContactModel();
 
-const modalView = new type.Modal(modalElement, events);
-const pageView = new type.Page(wrapper, events);
-const basketView = new type.BasketView(templateBasket, events);
-const deliveryFormView = new type.DeliveryFormView(templateOrder, events);
-const contactFormView = new type.ContactFormView(templateContacts, events);
-const successView = new type.SuccessView(templateOrderSuccess, events);
+const modalView = new Modal(modalElement, events);
+const pageView = new Page(wrapper, events);
+const basketView = new BasketView(templateBasket, events);
+const deliveryFormView = new DeliveryFormView(templateOrder, events);
+const contactFormView = new ContactFormView(templateContacts, events);
+const successView = new SuccessView(templateOrderSuccess, events);
 
-let productView: type.ProductView;
+let productView: ProductView;
 
 /********** Получаем данные с сервера **********/
 apiModel
 	.getProductList()
-	.then(function (data: type.IProductModel[]) {
+	.then(function (data: IProductModel[]) {
 		catalogModel.setItems(data);
 	})
 	.catch((error) => console.log(error));
 
-events.on(catalogModel.addEvent, (data: type.IProductModel[]) => {
+events.on(catalogModel.addEvent, (data: IProductModel[]) => {
 	let productViews: Array<HTMLElement> = [];
 	data.forEach((element) => {
 		productViews.push(
-			new type.ProductView(
-				templateCardCatalog,
-				events,
-				'ProductCatalog'
-			).render(element)
+			new ProductView(templateCardCatalog, events, 'ProductCatalog').render(
+				element
+			)
 		);
 	});
 	pageView.render(productViews);
@@ -68,11 +78,7 @@ events.on(catalogModel.addEvent, (data: type.IProductModel[]) => {
 
 events.on('ProductCatalog:Action', (data: String) => {
 	let product = catalogModel.getProduct(data);
-	productView = new type.ProductView(
-		templateCardPreview,
-		events,
-		'ProductView'
-	);
+	productView = new ProductView(templateCardPreview, events, 'ProductView');
 	modalView.render(productView.render(product), 'ProductView');
 	productView.setActiveSubmit(!basketModel.isExist(product));
 	modalView.open();
@@ -97,7 +103,7 @@ function renderFillBasket() {
 	let counter = 1;
 	basketModel.items.forEach((element) => {
 		productViews.push(
-			new type.ProductView(templateCardBasket, events, 'ProductBasket').render(
+			new ProductView(templateCardBasket, events, 'ProductBasket').render(
 				element,
 				counter++
 			)
@@ -123,7 +129,7 @@ events.on(pageView.event, () => {
 	let counter = 1;
 	basketModel.items.forEach((element) => {
 		productViews.push(
-			new type.ProductView(templateCardBasket, events, 'ProductBasket').render(
+			new ProductView(templateCardBasket, events, 'ProductBasket').render(
 				element,
 				counter++
 			)
@@ -188,21 +194,27 @@ events.on(contactFormView.submitEvent, () => {
 	let data = contactFormView.getValues();
 	contactModel.set(data.phone, data.email);
 
-	let orderRequestModel = new type.OrderRequestModel(
+	let orderRequestModel = new OrderRequestModel(
 		deliveryModel,
 		contactModel,
 		basketModel
 	);
 	apiModel
 		.order(orderRequestModel)
-		.then(function (data: type.IOrderResponseModel) {
+		.then(function (data: IOrderResponseModel) {
+			basketModel.removeAll();
 			modalView.render(successView.render(data), 'Success');
 		})
 		.catch((error) => console.log(error));
 });
 
+events.on('Success:Close', () => {
+	deliveryModel.clear();
+	contactModel.clear();
+	pageView.lock(false);
+});
+
 events.on(successView.event, () => {
-	basketModel.removeAll();
 	deliveryModel.clear();
 	contactModel.clear();
 	modalView.close();

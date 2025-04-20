@@ -1,3 +1,5 @@
+import { IEventEmitter } from '..';
+
 export interface IProductModel {
 	id: string;
 	description: string;

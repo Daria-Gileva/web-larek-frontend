@@ -1,3 +1,4 @@
+import { IEventEmitter } from '..';
 import { IProductModel } from './Product';
 
 export interface IBasketModel {
